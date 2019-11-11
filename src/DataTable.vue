@@ -1,5 +1,5 @@
 <template>
-	<div class="card material-table" ref="table">
+	<div class="card material-table" ref="table" :class="rtl ? 'rtl-layout' : 'ltr-layout'">
 		<div class="table-header">
 			<span class="table-title">{{ title }}</span>
 			<div class="actions">
@@ -46,7 +46,7 @@
 		<table ref="table">
 			<thead>
 				<tr>
-					<th v-if="indexing">#</th>
+					<th v-if="indexing" class="slim">#</th>
 					<th v-for="(column, index) in columns"
 						:key="index"
 						:class="(sortable ? 'sorting ' : '')
@@ -69,15 +69,18 @@
 					:class="{ clickable : clickable }"
 					@click="click(row)"
 				>
-					<td v-if="indexing">{{index + 1}}</td>
+					<td v-if="indexing" class="slim">{{index + 1}}</td>
 					<td v-for="(column, columnIndex) in columns"
 						:key="columnIndex"
 						:class="{ numeric : column.numeric }"
 					>
-						<div v-if="!column.html">
+						<div v-if="column.html" v-html="collect(row, column.field)" />
+						<div v-else-if="column.ltr">
+							<bdi dir="ltr">{{ collect(row, column.field) }}</bdi>
+						</div>
+						<div v-else>
 							{{ collect(row, column.field) }}
 						</div>
-						<div v-if="column.html" v-html="collect(row, column.field)" />
 					</td>
 					<slot name="tbody-tr" :row="row" />
 				</tr>
@@ -157,6 +160,11 @@
 		},
 
 		props: {
+			rtl: {
+				type: Boolean,
+				default: false,
+			},
+
 			indexing: {
 				type: Boolean,
 				default: true,
@@ -184,7 +192,7 @@
 			},
 
 			customButtons: {
-				type: Function,
+				type: Array,
 				required: false,
 				default: () => [],
 			},
@@ -565,7 +573,7 @@
 	};
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 	div.material-table {
 		padding: 0;
 	}
@@ -579,6 +587,10 @@
 		border: transparent 0 !important;
 		height: 48px;
 		color: rgba(0, 0, 0, .84);
+		width: 100%;
+		:focus {
+	    outline: none;
+		}
 	}
 
 	#search-input-container {
@@ -588,12 +600,11 @@
 
 	table {
 		table-layout: fixed;
+	  min-width: 100%;
 	}
 
 	.table-header {
 		height: 64px;
-		padding-left: 24px;
-		padding-right: 14px;
 		-webkit-align-items: center;
 		-ms-flex-align: center;
 		align-items: center;
@@ -604,12 +615,11 @@
 
 	.table-header .actions {
 		display: -webkit-flex;
-		margin-left: auto;
 	}
 
 	.table-header .btn-flat {
-			min-width: 36px;
-			padding: 0 8px;
+		min-width: 36px;
+		padding: 0 8px;
 	}
 
 	.table-header input {
@@ -684,6 +694,8 @@
 		display: flex;
 		-webkit-display: flex;
 		margin: 0;
+	  list-style-type: none;
+	  flex-direction: row-reverse;
 	}
 
 	.table-footer .material-pagination li a {
@@ -718,7 +730,6 @@
 	}
 
 	table tr td {
-		padding: 0 0 0 56px;
 		height: 48px;
 		font-size: 13px;
 		color: rgba(0, 0, 0, 0.87);
@@ -753,7 +764,6 @@
 		white-space: nowrap;
 		padding: 0;
 		height: 56px;
-		padding-left: 56px;
 		vertical-align: middle;
 		outline: none !important;
 
@@ -794,6 +804,7 @@
 	table th.sorting-asc:after,
 	table th.sorting-desc:after {
 		display: inline-block;
+		position: absolute;
 	}
 
 	table th.sorting-desc:after {
@@ -809,11 +820,41 @@
 		padding-right: 14px;
 	}
 
-	table th:first-child, table td:first-child {
-		padding-left: 24px;
-	}
-
 	.rtl {
 		direction: rtl;
+	}
+	.ltr-layout {
+		table th, table td {
+			padding-left: 56px;
+			text-align: left;
+		}
+		.table-header {
+			padding-left: 24px;
+			padding-right: 14px;
+		}
+		.table-header .actions {
+			margin-left: auto;
+		}
+		table th:first-child, table td:first-child {
+			padding-left: 24px;
+		}
+
+	}
+	.rtl-layout {
+		table th, table td {
+			padding-right: 56px;
+			text-align: right;
+		}
+		.table-header {
+			padding-left: 14px;
+			padding-right: 24px;
+		}
+		.table-header .actions {
+			margin-right: auto;
+		}
+		table th:first-child, table td:first-child {
+			padding-right: 24px;
+		}
+
 	}
 </style>

@@ -2,5 +2,6 @@
 	"rows_per_page": "دیتا در هز صفحه",
 	"out_of_pages": "از",
 	"all": "همه",
-	"search_data": "جستجو"
+	"search_data": "جستجو",
+	"__is_rtl": true
 }
