@@ -74,7 +74,7 @@
 						:key="columnIndex"
 						:class="{ numeric : column.numeric }"
 					>
-						<div v-if="column.html" v-html="collect(row, column.field)" />
+						<div v-if="column.html" v-html="collect(row, column.field)">&nbsp;</div>
 						<div v-else-if="column.ltr">
 							<bdi dir="ltr">{{ collect(row, column.field) }}</bdi>
 						</div>
