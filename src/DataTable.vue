@@ -46,6 +46,7 @@
 		<table ref="table">
 			<thead>
 				<tr>
+					<th v-if="indexing">#</th>
 					<th v-for="(column, index) in columns"
 						:key="index"
 						:class="(sortable ? 'sorting ' : '')
@@ -68,6 +69,7 @@
 					:class="{ clickable : clickable }"
 					@click="click(row)"
 				>
+					<td v-if="indexing">{{index + 1}}</td>
 					<td v-for="(column, columnIndex) in columns"
 						:key="columnIndex"
 						:class="{ numeric : column.numeric }"
@@ -155,6 +157,11 @@
 		},
 
 		props: {
+			indexing: {
+				type: Boolean,
+				default: true,
+			},
+
 			title: {
 				type: String,
 				required: true,
